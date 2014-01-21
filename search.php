@@ -1,35 +1,16 @@
 <?php
 session_start();
 
+require_once('lib/twitteroauth/twitteroauth.php');
+require_once('config.php');
+require_once "lib/db.php";
+if (!isset($_SESSION['access_token']))
+ 
+    header('Location: clean.php');
 
-// php-twient Application
-define('APP_CONSUMER_KEY', 'HiEPXelZpNGarMEnYDlooA');
-define('APP_CONSUMER_SECRET', 'x5po5wZXk61yadUdbSaW0kHKil3rTjFPFFBmznidw');
+$access_token = $_SESSION['access_token'];
 
-// @php-twient: http://twitter.com/php_twient
-define('USER_TOKEN', '18312050-CBkOEgRrlcmT0wBhZNTUVeU76YKPoaDSgIJe7GQha');
-define('USER_SECRET', 'UEuIAN26BgM5Jp04AF6Xjn7E5ovIYiBIkiuF6BaeO9HoL');
-
-
-
-require_once 'Twient/Twitter.php';
-//require_once('lib/Twient/Twitter/V1dot1.php');
-//require_once('config.php');
-
-use Twient\Twitter as Twitter;
-
-try {
-    $twitter = new Twitter();
-    $twitter->oAuth(
-        APP_CONSUMER_KEY,
-        APP_CONSUMER_SECRET,
-        USER_TOKEN,
-        USER_SECRET
-    );
-    $results = $twitter->call('search/tweets');
-} catch (Exception $e) {
-    echo $e . PHP_EOL;
-}
+$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -43,11 +24,34 @@ try {
       <h1>Result</h1>
 
       <?php
-      #Configure abaixo o seu login e senha do Twitter
      
-      $tw->call('search/tweets',$array);
+      //$user = $connection->get('account/verify_credentials');
+      //$pes = $connection->get('search/tweets',$para);
 
-print_r($tw);
+      $words = array("roubo","crime");
+
+      $i = count($words);
+
+   
+      
+
+
+      $pes = $connection->get("https://api.twitter.com/1.1/search/tweets.json?q=ROUBO");
+      $o = count($pes->statuses);
+      
+      
+      for($f=0;$f<$o;$f++)
+      {
+        $array = (array) $pes->statuses[$f]->text;
+
+      //$e = count($array);
+        echo($array[0])."<br><br>";
+        save($array[0]);
+      }
+      
+      
+      
+     
     
       ?>
       
